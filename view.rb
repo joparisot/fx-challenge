@@ -1,7 +1,12 @@
 require_relative 'parsing'
 
-# +33644640723
 class View
+  def initialize(twilio_client, number_hash)
+    @twilio_client = twilio_client
+    @from_number = number_hash[:from_number]
+    @to_number = number_hash[:to_number]
+  end
+
   def prompt_fx(currencies)
     hash = {}
     hash[:target_currencies] = []
@@ -22,18 +27,16 @@ class View
   end
 
   def display_result(hash)
-    puts "Those are the results: "
-    p hash
+    @twilio_client.account.messages.create(
+      from: @from_number,
+      to: @to_number,
+      body: "#{hash}"
+    )
   end
 
   def display_currencies(currencies)
-    # key: 18bde25409ab8a0d2edecaee47a116c7
-    # for all currencies, i can parse
-    # Will display here all the different currencies that can be converted
-    # When we ask several currencies, we will have to display a first / last option "I'm done": let's use 0
     currencies.each_with_index do |currency|
       puts "#{currency}"
     end
   end
-
 end
